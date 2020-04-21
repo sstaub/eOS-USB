@@ -1,5 +1,3 @@
-![](under_construction.gif)
-
 # eOS for USB
 An object orientated library for Arduino to control ETCs EOS Family Consoles with OSC over USB (an Ethernet version will follow later). The goal of the library is to have a smart toolbox to create your own boxes which covers your needing by endless combinations of hardware elements.
 
@@ -12,7 +10,7 @@ The library support hardware elements like encoders, fader, buttons with some he
 
 The library allows you to use hardware elements as an object and with the use of the helper functions, code becomes much easier to write and read and to understand. Also refer to the EOS manual for more information.
 
-For use with PlatformIO https://platformio.org, as a recommanded IDE, there is an extra start example folder called **#lighthack**.
+For use with PlatformIO https://platformio.org, as a recommanded IDE with MS VSCode, there is an extra start example folder called **#lighthack**.
 
 If you have whishes for other functions or classes make an issue. If you find bugs also, nobody is perfect.
 
@@ -119,5 +117,48 @@ The **initFader()** function is basic configuration and must use before you can 
 ## Classes
 
 ### Encoder
+The Encoder class creates an encoder object which allows to control parameters:
+```
+Encoder(uint8_t pinA, uint8_t pinB, uint8_t direction);
+```
+- **pinA** and **pinB** are the connection Pins for the encoder hardware
+- **direction** is used for changing the direction of the encoder to clockwise if pinA and pinB are swapped. The directions are FORWARD or REVERSE
+```
+// Example, this should done before the setup()
 
+Encoder encoder1(A0, A1, REVERSE);
+```
+If the Encoder have an extro button build in, you can add it with following class member:
+```
+void button(uint8_t buttonPin, ButtonMode buttonMode = HOME);
+```
+- **buttonPin** is the pin for the extra button
+- **buttonMode** is the function you can assign, following functions are available
+
+	-	HOME this will post a home command
+	- FINE this allows you to use the button as a **Shift** function
+```
+// Example, this must happen in the setup() before assigning a Parameter
+
+encoder1.button(A3, HOME);
+```
+Before using you must assign a Parameter:
+```
+void parameter(String param); // set a parameter
+String parameter(); // get the parameter name
+```
+- **param** is the Parameter which you want assign
+```
+// Example, this must happen in the setup() before assigning an encoder button
+
+encoder1.parameter("Pan");
+```
+To get the actual encoder state you must call inside the loop():
+```
+void update();
+```
+```
+// Example, this must happen in the loop() 
+encoder1.update();
+```
 
