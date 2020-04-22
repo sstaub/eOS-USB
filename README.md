@@ -53,14 +53,14 @@ Is a project folder for use with PlatformIO and includes the box1 code as a star
 
 ## Helper functions
 
-### Filters
+### **Filters**
 
 ```
 void filter(String pattern);
 ```
 With a Filter you can get messages from the console which you can use for proceeding  informations.
 
-### Parameter Subscriptions
+### **Parameter Subscriptions**
 
 ```
 void subscribe(String parameter);
@@ -68,7 +68,7 @@ void unSubscribe(String parameter); // unsubscribe a parameter
 ```
 With subscribtions you can get special informations about dedicated parameters.
 
-### Ping
+### **Ping**
 
 ```
 void ping(); // send a ping without a message
@@ -78,7 +78,7 @@ void ping(String message); // send a ping with a message
 With a ping you can get a reaction from the console which helps you to indentify your box and if is alive. You should send a ping regulary with message to identify your box on the console.
 
 
-### Command Line
+### **Command Line**
 
 ```
 void command(String cmd); // send a command
@@ -86,7 +86,7 @@ void newCommand(String newCmd); // clears cmd line before applyieng
 ```
 You can send a string to the command line.
 
-### Users
+### **Users**
 
 ```
 void user(int16_t userID);
@@ -97,19 +97,19 @@ This function allows you to change the user ID e.g.
 - **-1** is the current user
 - or any other user
 
-### Shift button
+### **Shift button**
 
 ```
 void shiftButton(uint8_t pin);
 ```
 This function allows you to assign a hardware button as a **Shift** button. **Shift** set the encoder and wheel messages to the **Fine** mode or for opposite the acceleration of the **Intens** parameter. It can replaced by using the optional encoder buttons as a **Shift** function.
 
-### Init faders
+### **Init faders**
 
 ```
 void initFaders(uint8_t page = 1, uint8_t faders = 10, uint8_t bank = 1);
 ```
-The **initFader()** function is basic configuration and must use before you can use your Fader objects.
+The **initFaders()** function is basic configuration and must use before you can use your Fader objects.
 - **page** the fader page on your console
 - **fader** is the number of fader on you console page
 - **bank** is virtuell OSC fader bank
@@ -118,13 +118,13 @@ The **initFader()** function is basic configuration and must use before you can 
 
 ## Classes
 
-### Encoder
+### **Encoder**
 The Encoder class creates an encoder object which allows to control parameters:
 ```
-Encoder(uint8_t pinA, uint8_t pinB, uint8_t direction);
+Encoder(uint8_t pinA, uint8_t pinB, uint8_t direction = FORWARD);
 ```
 - **pinA** and **pinB** are the connection Pins for the encoder hardware
-- **direction** is used for changing the direction of the encoder to clockwise if pinA and pinB are swapped. The directions are FORWARD or REVERSE
+- **direction** is used for changing the direction of the encoder to clockwise if pinA and pinB are swapped. The directions are FORWARD (standard) or REVERSE
 ```
 // Example, this should done before the setup()
 
@@ -164,3 +164,146 @@ void update();
 encoder1.update();
 ```
 
+### **Wheel**
+This class is similar to the Encoder class. It uses the wheel index instead a concrete Parameter. The Wheel index ist send by EOS with implicit OSC output “/eos/out/active/wheel/wheelIndex". You need a helper function to get the Wheel index and other information like parameter name and value. I will do a helper function later. With Wheel it is possible to handle dynamic parameter lists
+```
+Wheel(uint8_t pinA, uint8_t pinB, uint8_t direction  = FORWARD);
+```
+- **pinA** and **pinB** are the connection Pins for the encoder hardware
+- **direction** is used for changing the direction of the encoder to clockwise if pinA and pinB are swapped. The directions are FORWARD or REVERSE
+```
+// Example, this should done before the setup()
+
+Wheel wheel1(A0, A1, REVERSE);
+```
+If the Encoder have an extro button build in, you can add it with following class member:
+```
+void button(uint8_t buttonPin, ButtonMode buttonMode = HOME);
+```
+- **buttonPin** is the pin for the extra button
+- **buttonMode** is the function you can assign, following functions are available
+
+	- only FINE is available, this allows you to use the button as a **Shift** function
+```
+// Example, this must happen in the setup() before assigning a index
+
+wheel1.button(A3, HOME);
+wheel1.button(A3); // HOME is the standard mode
+```
+Before using you must assign a Wheel index:
+```
+void index(uint8_t idx); // set a Wheel index
+uint8_t idx(); // get the actual index
+```
+- **param** is the Parameter which you want assign
+```
+// Example, this must happen in the setup() before assigning an encoder button
+
+wheel.index(1); // most time index 1 is the Intens parameter
+```
+To get the actual encoder state you must call inside the loop():
+```
+void update();
+```
+```
+// Example, this must happen in the loop() 
+wheel1.update();
+```
+
+### **Key**
+With this class you can create Key objects which can be triggered with a button.
+```
+Key(uint8_t pin, String key);
+```
+- **pin** are the connection Pin for the button hardware
+- **key** is the Key name, refer to the manual to get all possible Key words
+```
+// Example, this should done before the setup()
+
+Key next(8, "NEXT"); // "Next" button on pin 8
+```
+To get the actual button state you must call inside the loop():
+```
+void update();
+```
+```
+// Example, this must happen in the loop() 
+next.update();
+```
+
+### **Macro**
+With this class you can create Macro objects which can be triggered with a button.
+```
+Macro(uint8_t pin, uint16_t macro);
+```
+- **pin** are the connection Pin for the button hardware
+- **macro** is the macro number you want to fire
+```
+// Example, this should done before the setup()
+
+Makro macro1(11, 101); // the button on pin 11 fires the macro
+```
+To get the actual button state you must call inside the loop():
+```
+void update();
+```
+```
+// Example, this must happen in the loop() 
+macro1.update();
+```
+
+### **Submaster**
+This class allows you to control a submaster with a hardware (slide) potentiometer as a fader.
+The fader is a linear 10kOhm, from Bourns or ALPS and can be 45/60/100mm long Put 10nF ceramic capitors between ground and fader levelers to prevent analog noise. **Additional Advices:**
+**Arduino UNO, MEGA:**
+use IOREF instead +5V to the top (single pin) of the fader (100%)
+GND to the center button pin (2 pins, the outer pin is normaly for the leveler) of the fader (0%)
+**TEENSY:**
++3.3V to the top (single pin) of the fader (100%)
+use ANALOG GND instead the normal GND to the center button pin (2 pins, the outer pin is normaly for the leveler) of the fader (0%)
+
+```
+Submaster(uint8_t analogPin, uint8_t firePin, uint8_t sub);
+```
+- **analogPin** are the connection Analog Pin for the fader leveler
+- **firePin** is the Pin number for an additional bump button. Set to 0 if you don't need it.
+- **sub** is the submaster number you want to control
+```
+// Example, this should done before the setup()
+
+Submaster submaster1(A5, 0, 1); // leveler is Analog Pin 5, no bump button, submaster 1 controlled
+```
+To get the actual button state you must call inside the loop():
+```
+void update();
+```
+```
+// Example, this must happen in the loop() 
+submaster1.update();
+```
+
+### **Fader**
+This class allows you to control a fader containing two control buttons, all  functions configured in EOS Tab 36, with a hardware (slide) potentiometer as a fader and buttons. 
+Before using Faders you must call **initFaders(page, faders, bank);**
+For fader hardware see also Submaster.
+```
+Fader(uint8_t analogPin, uint8_t firePin, uint8_t stopPin, uint8_t fader, uint8_t bank = 1);
+```
+- **analogPin** are the connection Analog Pin for the fader leveler
+- **firePin** is the Pin number for an additional fire button. Set to 0 if you don't need it.
+- **stopPin** is the Pin number for an additional stop button. Set to 0 if you don't need it.
+- **fader** is the fader number of the fader page you want to control
+- **bank** is the internal OSC bank number (standard 1)
+```
+// Example, this should done before the setup()
+
+Fader fader1(A4, 12, 13, 3); // leveler is Analog Pin 4, fire button at Pin 12, stop button at Pin 13, fader number 3 is controlled
+```
+To get the actual button state you must call inside the loop():
+```
+void update();
+```
+```
+// Example, this must happen in the loop() 
+fader1.update();
+```

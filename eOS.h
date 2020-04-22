@@ -144,7 +144,7 @@ class Encoder {
 		 * @param pinB pin B of the encoder
 		 * @param direction the direction for the wheel can be FORWARD or REVERSE
 		 */
-		Encoder(uint8_t pinA, uint8_t pinB, uint8_t direction);
+		Encoder(uint8_t pinA, uint8_t pinB, uint8_t direction = FORWARD);
 
 		/**
 		 * @brief add an optional encoder button
@@ -203,7 +203,7 @@ class Wheel {
 		 * @param pinB pinB of the encoder
 		 * @param direction the direction for the wheel can be FORWARD or REVERSE
 		 */
-		Wheel(uint8_t pinA, uint8_t pinB, uint8_t direction);
+		Wheel(uint8_t pinA, uint8_t pinB, uint8_t direction = FORWARD);
 
 		/**
 		 * @brief add an optional encoder button
