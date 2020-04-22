@@ -215,7 +215,6 @@ void setup() {
 	lcd.clear();
 
 	initEOS(); // for hotplug with Arduinos without native USB like UNO
-	initFaders();
 	shiftButton(SHIFT_BTN);
 	encoder1.button(A4, HOME);
 	encoder1.parameter(ENCODER_1_PARAMETER);
