@@ -214,24 +214,31 @@ void displayStatus() {
  *
  */
 void parseOSCMessage(String& msg) {
+	static String parseMsg;
 	if (msg.indexOf(HANDSHAKE_QUERY) != -1) { // Check to see if this is the handshake string
 		initEOS();
 		connectedToEos = true;
 		updateDisplay = true;
+		return;
 		}
 	else {
 		OSCMessage oscmsg;
 		oscmsg.fill((uint8_t*)msg.c_str(), (int)msg.length());
-		for (int i = 0; i < PARAMETER_MAX; i++) {
-			String parseMsg = PARAMETER_QUERY + parameter[i].name;
-			if (msg.indexOf(parseMsg) != -1) {
-				parameter[i].value = oscmsg.getFloat(0);
+		parseMsg = PARAMETER_QUERY + parameter[idx].name;
+		if (msg.indexOf(parseMsg) != -1) {
+				parameter[idx].value = oscmsg.getFloat(0);
 				connectedToEos = true;
-				if (i == idx || i == idx + 1) {
-					updateDisplay = true;
-					}
+				updateDisplay = true;
+				parseMsg = String();
 				return;
 				}
+		parseMsg = PARAMETER_QUERY + parameter[idx + 1].name;
+		if (msg.indexOf(parseMsg) != -1) {
+			parameter[idx + 1].value = oscmsg.getFloat(0);
+			connectedToEos = true;
+			updateDisplay = true;
+			parseMsg = String();
+			return;
 			}
 		}
 	}
