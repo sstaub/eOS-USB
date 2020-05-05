@@ -49,6 +49,14 @@ Is a box with 12 buttons to fire Macros, actual 101 thru 112 but this can easily
 ## cuebox
 Is a box based on the original box 1 which use the last and next button as BACK and GO for the main cue list. The display shows the active and pending cue as a pre formated text from console. It also shows how to create user chars for the lcd display.
 
+## cuebox2
+This cuebox example allows you to determine which data are displayed. Therefore there is a parser to deconstruct the text message send by EOS. Following data are available as Strings: 
+- Cuelist
+- Cue Number
+- Label
+- Duration
+- Progress in %
+
 ## #lighthack
 Is a project folder for use with PlatformIO and includes the box1 code as a starting point.
 
