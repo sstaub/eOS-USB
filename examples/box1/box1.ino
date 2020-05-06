@@ -216,7 +216,6 @@ void setup() {
 
 	initEOS(); // for hotplug with Arduinos without native USB like UNO
 	shiftButton(SHIFT_BTN);
-	encoder1.button(A4, HOME);
 	encoder1.parameter(ENCODER_1_PARAMETER);
 	encoder2.parameter(ENCODER_2_PARAMETER);
 
