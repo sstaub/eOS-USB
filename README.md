@@ -1,3 +1,5 @@
+![](under_construction.gif)
+
 # eOS for USB
 An object orientated library for Arduino to control ETCs EOS Family Consoles with OSC over USB (an Ethernet version will follow later). The goal of the library is to have a smart toolbox to create your own boxes which covers your needing by endless combinations of hardware elements.
 
@@ -46,31 +48,24 @@ Is a small faderwing with 6 faders and 12 buttons for Stop / Go
 ## macrobox
 Is a box with 12 buttons to fire Macros, actual 101 thru 112 but this can easily changed.
 
-## cuebox
-Is a box based on the original box 1 which use the last and next button as BACK and GO for the main cue list. The display shows the active and pending cue as a pre formated text from console. It also shows how to create user chars for the lcd display.
-
-## cuebox2
-This cuebox example allows you to determine which data are displayed. Therefore there is a parser to deconstruct the text message send by EOS. Following data are available as Strings: 
-- Cuelist
-- Cue Number
-- Label
-- Duration
-- Progress in %
-
 ## #lighthack
 Is a project folder for use with PlatformIO and includes the box1 code as a starting point.
 
 ## Helper functions
 
-### **Filters**
+### **sendOSC**
+```
+void sendOSC(OSCMessage& msg);
+```
+Send an OSC Message
 
+### **Filters**
 ```
 void filter(String pattern);
 ```
 With a Filter you can get messages from the console which you can use for proceeding  informations.
 
 ### **Parameter Subscriptions**
-
 ```
 void subscribe(String parameter);
 void unSubscribe(String parameter); // unsubscribe a parameter
@@ -78,17 +73,13 @@ void unSubscribe(String parameter); // unsubscribe a parameter
 With subscribtions you can get special informations about dedicated parameters.
 
 ### **Ping**
-
 ```
 void ping(); // send a ping without a message
 void ping(String message); // send a ping with a message 
 ```
-
 With a ping you can get a reaction from the console which helps you to indentify your box and if is alive. You should send a ping regulary with message to identify your box on the console.
 
-
 ### **Command Line**
-
 ```
 void command(String cmd); // send a command
 void newCommand(String newCmd); // clears cmd line before applyieng
@@ -96,25 +87,21 @@ void newCommand(String newCmd); // clears cmd line before applyieng
 You can send a string to the command line.
 
 ### **Users**
-
 ```
 void user(int16_t userID);
 ```
-
 This function allows you to change the user ID e.g. 
 - **0** is a background user
 - **-1** is the current user
 - or any other user
 
 ### **Shift button**
-
 ```
 void shiftButton(uint8_t pin);
 ```
 This function allows you to assign a hardware button as a **Shift** button. **Shift** set the encoder and wheel messages to the **Fine** mode or for opposite the acceleration of the **Intens** parameter. It can replaced by using the optional encoder buttons as a **Shift** function.
 
 ### **Init faders**
-
 ```
 void initFaders(uint8_t page = 1, uint8_t faders = 10, uint8_t bank = 1);
 ```
@@ -134,9 +121,9 @@ Encoder(uint8_t pinA, uint8_t pinB, uint8_t direction = FORWARD);
 ```
 - **pinA** and **pinB** are the connection Pins for the encoder hardware
 - **direction** is used for changing the direction of the encoder to clockwise if pinA and pinB are swapped. The directions are FORWARD (standard) or REVERSE
-```
-// Example, this should done before the setup()
 
+Example, this should done before the setup()
+```
 Encoder encoder1(A0, A1, REVERSE);
 ```
 If the Encoder have an extro button build in, you can add it with following class member:
@@ -148,9 +135,9 @@ void button(uint8_t buttonPin, ButtonMode buttonMode = HOME);
 
 	-	HOME this will post a home command
 	- FINE this allows you to use the button as a **Shift** function
-```
-// Example, this must happen in the setup() before assigning a Parameter
 
+Example, this must happen in the setup() before assigning a Parameter
+```
 encoder1.button(A3, HOME);
 ```
 Before using you must assign a Parameter:
@@ -159,17 +146,17 @@ void parameter(String param); // set a parameter
 String parameter(); // get the parameter name
 ```
 - **param** is the Parameter which you want assign
-```
-// Example, this must happen in the setup() before assigning an encoder button
 
+Example, this must happen in the setup() before assigning an encoder button
+```
 encoder1.parameter("Pan");
 ```
 To get the actual encoder state you must call inside the loop():
 ```
 void update();
 ```
+Example, this must happen in the loop() 
 ```
-// Example, this must happen in the loop() 
 encoder1.update();
 ```
 
@@ -180,9 +167,9 @@ Wheel(uint8_t pinA, uint8_t pinB, uint8_t direction  = FORWARD);
 ```
 - **pinA** and **pinB** are the connection Pins for the encoder hardware
 - **direction** is used for changing the direction of the encoder to clockwise if pinA and pinB are swapped. The directions are FORWARD or REVERSE
-```
-// Example, this should done before the setup()
 
+Example, this should done before the setup()
+```
 Wheel wheel1(A0, A1, REVERSE);
 ```
 If the Encoder have an extro button build in, you can add it with following class member:
@@ -193,9 +180,9 @@ void button(uint8_t buttonPin, ButtonMode buttonMode = HOME);
 - **buttonMode** is the function you can assign, following functions are available
 
 	- only FINE is available, this allows you to use the button as a **Shift** function
-```
-// Example, this must happen in the setup() before assigning a index
 
+Example, this must happen in the setup() before assigning a index
+```
 wheel1.button(A3, HOME);
 wheel1.button(A3); // HOME is the standard mode
 ```
@@ -205,17 +192,17 @@ void index(uint8_t idx); // set a Wheel index
 uint8_t idx(); // get the actual index
 ```
 - **param** is the Parameter which you want assign
-```
-// Example, this must happen in the setup() before assigning an encoder button
 
+Example, this must happen in the setup() before assigning an encoder button
+```
 wheel.index(1); // most time index 1 is the Intens parameter
 ```
 To get the actual encoder state you must call inside the loop():
 ```
 void update();
 ```
-```
-// Example, this must happen in the loop() 
+Example, this must happen in the loop()
+``` 
 wheel1.update();
 ```
 
@@ -226,17 +213,17 @@ Key(uint8_t pin, String key);
 ```
 - **pin** are the connection Pin for the button hardware
 - **key** is the Key name, refer to the manual to get all possible Key words
-```
-// Example, this should done before the setup()
 
+Example, this should done before the setup()
+```
 Key next(8, "NEXT"); // "Next" button on pin 8
 ```
 To get the actual button state you must call inside the loop():
 ```
 void update();
 ```
+Example, this must happen in the loop() 
 ```
-// Example, this must happen in the loop() 
 next.update();
 ```
 
@@ -247,17 +234,17 @@ Macro(uint8_t pin, uint16_t macro);
 ```
 - **pin** are the connection Pin for the button hardware
 - **macro** is the macro number you want to fire
-```
-// Example, this should done before the setup()
 
+Example, this should done before the setup()
+```
 Makro macro1(11, 101); // the button on pin 11 fires the macro
 ```
 To get the actual button state you must call inside the loop():
 ```
 void update();
 ```
+Example, this must happen in the loop() 
 ```
-// Example, this must happen in the loop() 
 macro1.update();
 ```
 
@@ -277,17 +264,17 @@ Submaster(uint8_t analogPin, uint8_t firePin, uint8_t sub);
 - **analogPin** are the connection Analog Pin for the fader leveler
 - **firePin** is the Pin number for an additional bump button. Set to 0 if you don't need it.
 - **sub** is the submaster number you want to control
-```
-// Example, this should done before the setup()
 
+Example, this should done before the setup()
+```
 Submaster submaster1(A5, 0, 1); // leveler is Analog Pin 5, no bump button, submaster 1 controlled
 ```
 To get the actual button state you must call inside the loop():
 ```
 void update();
 ```
+Example, this must happen in the loop()
 ```
-// Example, this must happen in the loop() 
 submaster1.update();
 ```
 
@@ -303,16 +290,46 @@ Fader(uint8_t analogPin, uint8_t firePin, uint8_t stopPin, uint8_t fader, uint8_
 - **stopPin** is the Pin number for an additional stop button. Set to 0 if you don't need it.
 - **fader** is the fader number of the fader page you want to control
 - **bank** is the internal OSC bank number (standard 1)
-```
-// Example, this should done before the setup()
 
+Example, this should done before the setup()
+```
 Fader fader1(A4, 12, 13, 3); // leveler is Analog Pin 4, fire button at Pin 12, stop button at Pin 13, fader number 3 is controlled
 ```
 To get the actual button state you must call inside the loop():
 ```
 void update();
 ```
+Example, this must happen in the loop()
 ```
-// Example, this must happen in the loop() 
 fader1.update();
+```
+
+### **OscButton**
+With this new class you can create generic buttons. The class initializer is overloaded to allow sending different OSC data types: Interger 32 bit, Float, Strings or no data. 
+```
+OscButton(uint8_t pin, String pattern, int32_t integer32);
+
+OscButton(uint8_t pin, String pattern, float float32);
+
+OscButton(uint8_t pin, String pattern, String message);
+
+OscButton(uint8_t pin, String pattern, IPAddress ip = eosIP, uint16_t port = eosPort);
+```
+- **pin** the connection Pin for the button hardware
+- **pattern** the OSC address pattern
+- **integer32** optional Integer data to send
+- **float32** optional Float data to send
+- **message** optional String to send
+
+Example, this should done before the setup()
+```
+OscButton pingButton(8 , "/eos/ping", "hello EOS");
+```
+To get the actual button state you must call inside the loop():
+```
+void update();
+```
+Example, this must happen in the loop() 
+```
+pingButton.update();
 ```

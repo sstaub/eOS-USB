@@ -1,26 +1,25 @@
-/* eOS library code is placed under the MIT license
- * Copyright (c) 2020 Stefan Staub
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+/*
+eOS library for USB code is placed under the MIT license
+Copyright (c) 2020 Stefan Staub
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
 
 /*
 fader is a linear 10kOhm, from Bourns or ALPS and can be 45/60/100mm long
@@ -55,6 +54,8 @@ put 100nF ceramic capitors between ground and the input of the buttons
 
 #define FADER_UPDATE_RATE_MS	40 // update each 40ms
 #define THRESHOLD		4 // Jitter threshold of the faders
+
+void sendOSC(OSCMessage& msg);
 
 /**
  * @brief Filter for messages you want receive
@@ -417,5 +418,71 @@ class Macro {
     uint8_t last;
 
 	};
+
+class OscButton {
+
+	public:
+
+	/**
+	 * @brief Construct a new osc Button object for sending an integer value
+	 * 
+	 * @param pin button pin
+	 * @param pattern OSC address
+	 * @param integer32 value must cast (int32_t) when using with a non matching size
+	 * @param ip optional destination IP address
+	 * @param port optional destination port
+	 */
+	OscButton(uint8_t pin, String pattern, int32_t integer32);
+	
+	/**
+	 * @brief Construct a new osc Button object for sending a float value
+	 * 
+	 * @param pin button pin
+	 * @param pattern OSC address
+	 * @param float32 float value
+	 * @param ip optional destination IP address
+	 * @param port optional destination port
+	 */
+	OscButton(uint8_t pin, String pattern, float float32);
+	
+	/**
+	 * @brief Construct a new osc Button object for ssending a String
+	 * 
+	 * @param pin button pin
+	 * @param pattern OSC address
+	 * @param message String message
+	 * @param ip optional destination IP address
+	 * @param port optional destination port
+	 */
+	OscButton(uint8_t pin, String pattern, String message);
+	
+	/**
+	 * @brief Construct a new osc Button object with no value
+	 * 
+	 * @param pin button pin
+	 * @param pattern OSC address
+	 * @param ip optional destination IP address
+	 * @param port optional destination port
+	 */
+	OscButton(uint8_t pin, String pattern);
+	/**
+	 * @brief update the state of the Macro button, must in while() loop
+	 * 
+	 */
+	void update();
+
+	private:
+
+		enum osc_t {NONE, INT32, FLOAT32, STRING};
+		osc_t typ;
+		String pattern;
+		int32_t integer32;
+		float float32;
+		String message;
+		uint8_t pin;
+    uint8_t last;
+
+	};
+
 
 #endif

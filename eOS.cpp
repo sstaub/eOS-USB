@@ -8,69 +8,60 @@
 	SLIPEncodedSerial serialSLIP(Serial);
 #endif
 
+
+void sendOSC(OSCMessage& msg) {
+	serialSLIP.beginPacket();
+	msg.send(serialSLIP);
+	serialSLIP.endPacket();
+	}
+
 void filter(String pattern) {
 	OSCMessage filter("/eos/filter/add");
 	filter.add(pattern.c_str());
-	serialSLIP.beginPacket();
-	filter.send(serialSLIP);
-	serialSLIP.endPacket();
+	sendOSC(filter);
 	}
 
 void subscribe(String parameter) {
 	String subPattern = "/eos/subscribe/param/" + parameter;
 	OSCMessage sub(subPattern.c_str());
 	sub.add(SUBSCRIBE);
-	serialSLIP.beginPacket();
-	sub.send(serialSLIP);
-	serialSLIP.endPacket();
+	sendOSC(sub);
 	}
 
 void unSubscribe(String parameter) {
 	String subPattern = "/eos/subscribe/param/" + parameter;
 	OSCMessage sub(subPattern.c_str());
 	sub.add(UNSUBSCRIBE);
-	serialSLIP.beginPacket();
-	sub.send(serialSLIP);
-	serialSLIP.endPacket();
+	sendOSC(sub);
 	}
 
 void ping() {
 	OSCMessage ping("/eos/ping");
-	serialSLIP.beginPacket();
-	ping.send(serialSLIP);
-	serialSLIP.endPacket();
+	sendOSC(ping);
 	}
 
 void ping(String message) {
 	OSCMessage ping("/eos/ping");
 	ping.add(message.c_str());
-	serialSLIP.beginPacket();
-	ping.send(serialSLIP);
-	serialSLIP.endPacket();
+	sendOSC(ping);
 	}
 
 void command(String cmd) {
 	OSCMessage cmdPattern("/eos/cmd");
 	cmdPattern.add(cmd.c_str());
-	serialSLIP.beginPacket();
-	cmdPattern.send(serialSLIP);
-	serialSLIP.endPacket();
+	sendOSC(cmdPattern);
 	}
 
 void newCommand(String newCmd) {
 	OSCMessage newCmdPattern("/eos/newcmd");
 	newCmdPattern.add(newCmd.c_str());
-	serialSLIP.beginPacket();
-	newCmdPattern.send(serialSLIP);
-	serialSLIP.endPacket();
+	sendOSC(newCmdPattern);
 	}
 
 void user(int16_t userID) {
 	OSCMessage userPattern("/eos/user");
 	userPattern.add(userID);
-	serialSLIP.beginPacket();
-	userPattern.send(serialSLIP);
-	serialSLIP.endPacket();
+	sendOSC(userPattern);
 	}
 
 Key::Key(uint8_t pin, String keyName) {
@@ -91,9 +82,7 @@ void Key::update() {
 			last = LOW;
 			keyUpdate.add(EDGE_DOWN);
 			}
-		serialSLIP.beginPacket();
-    keyUpdate.send(serialSLIP);
-    serialSLIP.endPacket();
+		sendOSC(keyUpdate);
 		}
 	}
 
@@ -164,9 +153,7 @@ void Encoder::update() {
 		wheelMsg += '/' + param;
 		OSCMessage wheelUpdate(wheelMsg.c_str());
 		wheelUpdate.add(encoderMotion);
-		serialSLIP.beginPacket();
-		wheelUpdate.send(serialSLIP);
-		serialSLIP.endPacket();
+		sendOSC(wheelUpdate);
 		}
 	
 	if (buttonPin) {
@@ -181,9 +168,7 @@ void Encoder::update() {
 					buttonPinLast = LOW;
 					buttonUpdate.add(EDGE_DOWN);
 					}
-				serialSLIP.beginPacket();
-				buttonUpdate.send(serialSLIP);
-				serialSLIP.endPacket();
+				sendOSC(buttonUpdate);
 				}	
 			}
 		}
@@ -248,9 +233,7 @@ void Wheel::update() {
 		wheelMsg += '/' + String(idx);
 		OSCMessage wheelUpdate(wheelMsg.c_str());
 		wheelUpdate.add(encoderMotion);
-		serialSLIP.beginPacket();
-		wheelUpdate.send(serialSLIP);
-		serialSLIP.endPacket();
+		sendOSC(wheelUpdate);
 		}
 	}
 
@@ -276,9 +259,7 @@ void Submaster::update() {
 			analogLast = current;
 			OSCMessage faderUpdate(subPattern.c_str());
 			faderUpdate.add(value);
-			serialSLIP.beginPacket();
-			faderUpdate.send(serialSLIP);
-			serialSLIP.endPacket();
+			sendOSC(faderUpdate);
 			}
 		updateTime = millis();
 		}
@@ -293,9 +274,7 @@ void Submaster::update() {
 				fireLast = LOW;
 				fireUpdate.add(EDGE_DOWN);
 				}
-			serialSLIP.beginPacket();
-			fireUpdate.send(serialSLIP);
-			serialSLIP.endPacket();
+			sendOSC(fireUpdate);
 			}
 		}
 	}
@@ -308,9 +287,7 @@ void initFaders(uint8_t page, uint8_t faders, uint8_t bank) {
 	faderInit += '/';
 	faderInit += faders;
 	OSCMessage faderBank(faderInit.c_str());
-	serialSLIP.beginPacket();
-	faderBank.send(serialSLIP);
-	serialSLIP.endPacket();
+	sendOSC(faderBank);
 	}
 
 Fader::Fader(uint8_t analogPin, uint8_t firePin, uint8_t stopPin, uint8_t fader, uint8_t bank) {
@@ -340,9 +317,7 @@ void Fader::update() {
 			analogLast = current;
 			OSCMessage faderUpdate(faderPattern.c_str());
 			faderUpdate.add(value);
-			serialSLIP.beginPacket();
-			faderUpdate.send(serialSLIP);
-			serialSLIP.endPacket();
+			sendOSC(faderUpdate);
 			}
 		updateTime = millis();
 		}	
@@ -358,9 +333,7 @@ void Fader::update() {
 				fireLast = LOW;
 				fireUpdate.add(EDGE_DOWN);
 				}
-			serialSLIP.beginPacket();
-			fireUpdate.send(serialSLIP);
-			serialSLIP.endPacket();
+			sendOSC(fireUpdate);
 			}
 		}
 
@@ -375,9 +348,7 @@ void Fader::update() {
 				stopLast = LOW;
 				stopUpdate.add(EDGE_DOWN);
 				}
-			serialSLIP.beginPacket();
-			stopUpdate.send(serialSLIP);
-			serialSLIP.endPacket();
+			sendOSC(stopUpdate);
 			}
 		}
 	}
@@ -417,8 +388,57 @@ void Macro::update() {
 			last = LOW;
 			fireUpdate.add(EDGE_DOWN);
 			}
-		serialSLIP.beginPacket();
-    fireUpdate.send(serialSLIP);
-    serialSLIP.endPacket();
+		sendOSC(fireUpdate);
+		} 
+	}
+
+OscButton::OscButton(uint8_t pin, String pattern, int32_t integer32) {
+	this->pin = pin;
+	this->pattern = pattern;
+	this->integer32 = integer32;
+	pinMode(pin, INPUT_PULLUP);
+	last = digitalRead(pin);
+	typ = INT32;
+	}
+
+OscButton::OscButton(uint8_t pin, String pattern, float float32) {
+	this->pin = pin;
+	this->pattern = pattern;
+	this->float32 = float32;
+	pinMode(pin, INPUT_PULLUP);
+	last = digitalRead(pin);
+	typ = FLOAT32;
+	}
+
+OscButton::OscButton(uint8_t pin, const String pattern, String message) {
+	this->pin = pin;
+	this->pattern = pattern;
+	this->message = message;
+	pinMode(pin, INPUT_PULLUP);
+	last = digitalRead(pin);
+	typ = STRING;
+	}
+
+OscButton::OscButton(uint8_t pin, String pattern) {
+	this->pin = pin;
+	this->pattern = pattern;
+	pinMode(pin, INPUT_PULLUP);
+	last = digitalRead(pin);
+	typ = NONE;
+	}
+
+void OscButton::update() {
+	if ((digitalRead(pin)) != last) {
+		if (last == LOW) {
+			last = HIGH;
+			}
+		else {
+			last = LOW;
+			OSCMessage osc(pattern.c_str());
+			if (typ == INT32) osc.add(integer32);
+			if (typ == FLOAT32) osc.add(float32);
+			if (typ == STRING) osc.add(message.c_str());
+			sendOSC(osc);
+			}
 		} 
 	}
