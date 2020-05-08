@@ -4,7 +4,8 @@ Wheel	KEYWORD1
 Key	KEYWORD1
 Submaster	KEYWORD1
 Fader	KEYWORD1
-Macro KEYWORD1
+Macro	KEYWORD1
+OscButton	KEYWORD2
 
 # eOS Class mebers
 update	KEYWORD2
@@ -15,6 +16,7 @@ faderBank	KEYWORD2
 faderNumber	KEYWORD2
 
 # eOS Functions
+sendOSC	KEYWORD2
 filter	KEYWORD2
 subscribe	KEYWORD2
 unsubscribe	KEYWORD2
